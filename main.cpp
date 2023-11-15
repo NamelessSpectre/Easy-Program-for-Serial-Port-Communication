@@ -1,22 +1,22 @@
 #include <stdio.h>
 #include <Windows.h>
 #include <iostream>
-#include "Ð´´®¿Ú.h"
-#include "¶Á´®¿Ú.h"
+#include "WriteCom.h"
+#include "ReadCom.h"
 using namespace std;
 
 int main()
 {
 	int Acction = 0;
 	int Warning = 0;
-	LPCWSTR PcComPort = L"COM1";   // ´®¿ÚÃû³Æ£¬CreateFileÐèÒª´«ÈëLPCWSTR
+	LPCWSTR PcComPort = L"COM1";
 	while (1)
 	{
 		Acction = 0;
 		if (Acction == 0)
 		{
-			cout << "´®¿ÚÍ¨ÐÅ½çÃæ£¬ÇëÑ¡Ôñ²Ù×÷£¨ÊäÈë1¡¢2¡¢3£©" << endl;
-			cout << "1.¶ÁÈ¡ÄÚÈÝ  2.Ð´ÈëÄÚÈÝ  3.ÍË³ö" << endl;
+			cout << "Enter the number to proceed to the next stepï¼ˆinput 1ã€2 or 3ï¼‰" << endl;
+			cout << "1.Read  2.Write  3.Quit" << endl;
 			cin >> Acction;
 		}
 
@@ -32,18 +32,18 @@ int main()
 		}
 		else if (Acction == 3)
 		{
-			cout << "³ÌÐòÕý³£ÍË³ö" << endl;
+			cout << "Program quit successfully" << endl;
 			Warning = 0;
 			return 0;
 		}
 		else
 		{
-			cout << "·Ç·¨ÊäÈë£¬ÇëÖØÊÔ£¡\n" << endl;
+			cout << "Illegal import!\n" << endl;
 			Acction = 0;
 			Warning = Warning + 1;
 			if (Warning > 10)
 			{
-				printf("±¨´í¹ý¶à£¬ÏµÍ³×Ô¶¯ÍË³ö£¡");
+				printf("Warning!Too much wrong!");
 				return 1;
 			}
 		}
