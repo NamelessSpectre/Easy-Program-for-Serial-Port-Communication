@@ -5,81 +5,69 @@
 using namespace std;
 
 
-int ReadCom(LPCWSTR PcComPort)   // ½ÓÊÕ´®¿ÚÃû³Æ
+int ReadCom(LPCWSTR PcComPort)
 {
 	if (PcComPort == NULL)
 	{
-		printf("½ÓÊÕ´®¿Ú³ö´í£¡\n");
+		printf("Receiving serial port error\n");
 		return 1;
 	}
 
-	HANDLE handleCom;   // ´®¿Ú¾ä±ú
-	DCB dcb;   // ´®¿Ú²ÎÊı½á¹¹Ìå
-	BOOL IfSuccess;   // ÅĞ¶ÏÊÇ·ñ³É¹¦
-	char ReceiveBuffer[128] = { 0 };   // ½ÓÊÕ»º³åÇø
-	DWORD dw_BytesRead = 0;   // ½ÓÊÕ×Ö½ÚÊı
+	HANDLE handleCom;
+	DCB dcb;
+	BOOL IfSuccess;
+	char ReceiveBuffer[128] = { 0 };
+	DWORD dw_BytesRead = 0;
 
 
 	handleCom = CreateFile(PcComPort, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
-	// ´«ÈëµÄÒÀ´Î±íÊ¾£º´®¿ÚÃû³Æ¡¢¶Á·½Ê½´ò¿ª¡¢²»¹²Ïí¡¢ÎŞ°²È«ÊôĞÔ¡¢´ò¿ª¶ø²»ÊÇ´´½¨¡¢·ÇÒì²½I/O£¬ÎŞÄ£°åÎÄ¼ş 
 
 	if (handleCom == INVALID_HANDLE_VALUE)
 	{
-		printf("´ò¿ª´®¿ÚÊ§°Ü\n");
+		printf("Failed to open the serial port\n");
 		CloseHandle(handleCom);
 		return 1;
 	}
 
-	// »ñÈ¡´®¿Ú²ÎÊı
 	IfSuccess = GetCommState(handleCom, &dcb);
-	// ¼ì²éÊÇ·ñ³É¹¦
 	if (!IfSuccess)
 	{
-		printf("»ñÈ¡×´Ì¬Ê§°Ü\n");
+		printf("Failed to get the state\n");
 		CloseHandle(handleCom);
 		return 1;
 	}
 
-	// ÅäÖÃ´®¿Ú²ÎÊı
-	dcb.BaudRate = CBR_9600;   // ÉèÖÃ²¨ÌØÂÊÎª9600
-	dcb.ByteSize = 8;   // ÉèÖÃÊı¾İÎ»Îª8
-	dcb.Parity = NOPARITY;   // ÉèÖÃÎŞÆæÅ¼Ğ£Ñé
-	dcb.StopBits = ONESTOPBIT;   // ÉèÖÃÍ£Ö¹Î»Îª1
+	dcb.BaudRate = CBR_9600;
+	dcb.ByteSize = 8;
+	dcb.Parity = NOPARITY;
+	dcb.StopBits = ONESTOPBIT;
 
-	// ÉèÖÃ´®¿Ú²ÎÊı
 	IfSuccess = SetCommState(handleCom, &dcb);
-
-	// ¼ì²éÊÇ·ñ³É¹¦
 	if (!IfSuccess)
 	{
-		printf("´®¿Ú²ÎÊıÉèÖÃÊ§°Ü\n");
+		printf("Failed to set the state\n");
 		CloseHandle(handleCom);
 		return 1;
 	}
 
-	// ´òÓ¡´®¿Ú²ÎÊı
-	printf("´®¿ÚÒÑÁ¬½Ó\n");
-	printf("²¨ÌØÂÊ£º%d£¬Êı¾İÎ»£º%d£¬ÆæÅ¼Ğ£Ñé×´¿ö£º%d£¬Í£Ö¹Î»£º%d\n", dcb.BaudRate, dcb.ByteSize, dcb.Parity, dcb.StopBits);
+	printf("Serial port Connected\n");
+	printf("BaudRateï¼š%dï¼ŒByteSizeï¼š%dï¼ŒParityï¼š%dï¼ŒStopBitsï¼š%d\n", dcb.BaudRate, dcb.ByteSize, dcb.Parity, dcb.StopBits);
 
-	// ¶Á´®¿ÚÊı¾İ
 	IfSuccess = ReadFile(handleCom, ReceiveBuffer, 128, &dw_BytesRead, NULL);
-	// ´«ÈëµÄÒÀ´Î±íÊ¾£º´®¿Ú¾ä±ú¡¢½ÓÊÕ»º³åÇø¡¢½ÓÊÕ»º³åÇø´óĞ¡¡¢Êµ¼Ê½ÓÊÕ×Ö½ÚÊı¡¢²»ÊÊÓÃOVERLAPPED½á¹¹
 
-	// ¼ì²éÊÇ·ñ¶ÁÈ¡³É¹¦
 	if (!IfSuccess)
 	{
-		printf("¶ÁÈ¡Ê§°Ü\n");
+		printf("Failed to read\n");
 		CloseHandle(handleCom);
 		return 1;
 	}
 	else
 	{
-		printf("½ÓÊÕÊı¾İÈçÏÂ£º%s\n", ReceiveBuffer);
+		printf("Receiving dataï¼š%s\n", ReceiveBuffer);
 	}
 
-	// ¹Ø±Õ´®¿Ú
 	CloseHandle(handleCom);
-	printf("¶ÁÈ¡Íê³É£¬´®¿ÚÒÑ¹Ø±Õ\n");
+	printf("Finish reading\n");
 
 	return 0;
 }
